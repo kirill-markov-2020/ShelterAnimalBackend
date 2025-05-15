@@ -1,4 +1,4 @@
-﻿namespace TestLibrary.Models
+﻿namespace ModelsLibrary
 {
     public class Role
     {

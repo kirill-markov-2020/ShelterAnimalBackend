@@ -3,8 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using TestLibrary.Models;
 
-namespace TestLibrary.Models
+namespace ModelsLibrary
 {
     public class Adoption
     {
@@ -18,3 +19,5 @@ namespace TestLibrary.Models
 
     }
 }
+    
+
