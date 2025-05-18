@@ -1,4 +1,4 @@
-﻿namespace ModelsLibrary
+﻿namespace ShelterAnimalBackend.Core.Entities
 {
     public class Role
     {

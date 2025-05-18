@@ -4,12 +4,12 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ModelsLibrary
+namespace ShelterAnimalBackend.Core.Entities
 {
-    public class StatusAdoption
+    public class AnimalStatus
     {
         public int Id { get; set; }
         public string Name { get; set; }
-        
+
     }
 }

@@ -1,44 +1,25 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using ModelsLibrary;
-using ShelterAnimalBackend.Data;
+﻿// ShelterAnimalBackend.Api/Controllers/AnimalsController.cs
+using Microsoft.AspNetCore.Mvc;
+using ShelterAnimalBackend.Application.Services;
+using ShelterAnimalBackend.Core.Entities;
 
-namespace ShelterAnimalBackend.Controllers
+namespace ShelterAnimalBackend.Api.Controllers;
+
+[Route("api/[controller]")]
+[ApiController]
+public class AnimalsController : ControllerBase
 {
-    [Route("api/[controller]")]
-    [ApiController]
-    public class AnimalsController : ControllerBase
+    private readonly AnimalService _animalService;
+
+    public AnimalsController(AnimalService animalService)
     {
-        private readonly AnimalShelterDbContext _context;
+        _animalService = animalService;
+    }
 
-        public AnimalsController(AnimalShelterDbContext context)
-        {
-            _context = context;
-        }
-
-        [HttpGet]
-        public async Task<ActionResult<IEnumerable<Animal>>> GetAnimals()
-        {
-            return await _context.Animal
-                .Include(a => a.TypeAnimal)
-                .Include(a => a.AnimalStatus)
-                .ToListAsync();
-        }
-
-        [HttpGet("{id}")]
-        public async Task<ActionResult<Animal>> GetAnimal(int id)
-        {
-            var animal = await _context.Animal
-                .Include(a => a.TypeAnimal)
-                .Include(a => a.AnimalStatus)
-                .FirstOrDefaultAsync(a => a.Id == id);
-
-            if (animal == null)
-            {
-                return NotFound();
-            }
-
-            return animal;
-        }
+    [HttpGet]
+    public async Task<ActionResult<List<Animal>>> GetAnimals()
+    {
+        var animals = await _animalService.GetAllAsync();
+        return Ok(animals);
     }
 }

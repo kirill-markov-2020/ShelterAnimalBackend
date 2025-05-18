@@ -28,6 +28,8 @@
 
   <ItemGroup>
     <ProjectReference Include="..\ModelsLibrary\ShelterAnimalBackend.Core.csproj" />
+    <ProjectReference Include="..\ShelterAnimalBackend.Application\ShelterAnimalBackend.Application.csproj" />
+    <ProjectReference Include="..\ShelterAnimalBackend.Infrastructure\ShelterAnimalBackend.Infrastructure.csproj" />
   </ItemGroup>
 
 </Project>

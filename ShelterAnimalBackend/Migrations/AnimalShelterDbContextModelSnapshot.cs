@@ -4,8 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
-using ShelterAnimalBackend.Data;
-
+using ShelterAnimalBackend.Infrastructure.Data;
 #nullable disable
 
 namespace ShelterAnimalBackend.Migrations

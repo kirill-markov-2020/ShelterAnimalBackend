@@ -1,8 +1,13 @@
-﻿using System.Collections.Generic;
-using ModelsLibrary;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
+using ShelterAnimalBackend.Core.Entities;
+using System;
+using System.Collections.Generic;
+using System.Data;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 
-namespace ShelterAnimalBackend.Data
+namespace ShelterAnimalBackend.Infrastructure.Data
 {
     public class AnimalShelterDbContext : DbContext
     {
