@@ -1,11 +1,15 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
-VisualStudioVersion = 17.14.35821.62 d17.14
+VisualStudioVersion = 17.14.35821.62
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ShelterAnimalBackend", "ShelterAnimalBackend\ShelterAnimalBackend.csproj", "{F6BA6512-7664-49AC-99E2-6D129507BBDB}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ShelterAnimalBackend.Api", "ShelterAnimalBackend\ShelterAnimalBackend.Api.csproj", "{F6BA6512-7664-49AC-99E2-6D129507BBDB}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ModelsLibrary", "ModelsLibrary\ModelsLibrary.csproj", "{1582F0F5-98F1-4D71-A097-F4F2E06BDE64}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ShelterAnimalBackend.Core", "ModelsLibrary\ShelterAnimalBackend.Core.csproj", "{1582F0F5-98F1-4D71-A097-F4F2E06BDE64}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ShelterAnimalBackend.Application", "ShelterAnimalBackend.Application\ShelterAnimalBackend.Application.csproj", "{3E4914C5-7315-4B21-B4AE-E650F434F350}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ShelterAnimalBackend.Infrastructure", "ShelterAnimalBackend.Infrastructure\ShelterAnimalBackend.Infrastructure.csproj", "{C0427B08-D752-4C7F-B6E6-D142E8677DC2}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -21,6 +25,14 @@ Global
 		{1582F0F5-98F1-4D71-A097-F4F2E06BDE64}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{1582F0F5-98F1-4D71-A097-F4F2E06BDE64}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{1582F0F5-98F1-4D71-A097-F4F2E06BDE64}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3E4914C5-7315-4B21-B4AE-E650F434F350}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3E4914C5-7315-4B21-B4AE-E650F434F350}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3E4914C5-7315-4B21-B4AE-E650F434F350}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3E4914C5-7315-4B21-B4AE-E650F434F350}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C0427B08-D752-4C7F-B6E6-D142E8677DC2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C0427B08-D752-4C7F-B6E6-D142E8677DC2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C0427B08-D752-4C7F-B6E6-D142E8677DC2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C0427B08-D752-4C7F-B6E6-D142E8677DC2}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
