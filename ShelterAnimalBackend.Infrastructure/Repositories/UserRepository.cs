@@ -51,4 +51,13 @@ public class UserRepository : IUserRepository
             await _context.SaveChangesAsync();
         }
     }
+    public async Task<bool> EmailExistsAsync(string email)
+    {
+        return await _context.User.AnyAsync(u => u.Email == email);
+    }
+
+    public async Task<bool> LoginExistsAsync(string login)
+    {
+        return await _context.User.AnyAsync(u => u.Login == login);
+    }
 }

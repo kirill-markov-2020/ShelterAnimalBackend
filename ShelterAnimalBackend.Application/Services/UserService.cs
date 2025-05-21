@@ -29,6 +29,16 @@ public class UserService
 
     public async Task<UserResponse> CreateAsync(CreateUserRequest request)
     {
+        if (await _userRepository.EmailExistsAsync(request.Email))
+        {
+            throw new ArgumentException("email_taken", "Email уже занят");
+        }
+
+        if (await _userRepository.LoginExistsAsync(request.Login))
+        {
+            throw new ArgumentException("login_taken", "Логин уже занят");
+        }
+
         var user = new User
         {
             Surname = request.Surname,
@@ -37,7 +47,7 @@ public class UserService
             Email = request.Email,
             Phone = request.Phone,
             Login = request.Login,
-            Password = request.Password, 
+            Password = request.Password,
             RoleId = request.RoleId
         };
 
