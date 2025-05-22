@@ -60,4 +60,10 @@ public class UserRepository : IUserRepository
     {
         return await _context.User.AnyAsync(u => u.Login == login);
     }
+    public async Task<User?> GetByLoginAsync(string login)
+    {
+        return await _context.User
+            .Include(u => u.Role) 
+            .FirstOrDefaultAsync(u => u.Login == login);
+    }
 }

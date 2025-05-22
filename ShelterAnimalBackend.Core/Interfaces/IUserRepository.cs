@@ -16,4 +16,5 @@ public interface IUserRepository
     Task DeleteAsync(int id);
     Task<bool> EmailExistsAsync(string email); 
     Task<bool> LoginExistsAsync(string login);
+    Task<User?> GetByLoginAsync(string login);
 }
