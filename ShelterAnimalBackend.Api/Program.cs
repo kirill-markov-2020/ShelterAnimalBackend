@@ -3,14 +3,16 @@ using ShelterAnimalBackend.Application.Services;
 using ShelterAnimalBackend.Core.Interfaces;
 using ShelterAnimalBackend.Infrastructure.Data;
 using ShelterAnimalBackend.Infrastructure.Repositories;
-
-
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.IdentityModel.Tokens;
+using System.Text;
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
 builder.Services.AddControllers();
 
-// Add DbContext
+
+builder.Services.AddAuthorization();
+
 builder.Services.AddDbContext<AnimalShelterDbContext>(options =>
     options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
 builder.Services.AddScoped<IAnimalRepository, AnimalRepository>();
@@ -21,15 +23,38 @@ builder.Services.AddScoped<ITemporaryAccommodationRepository, TemporaryAccommoda
 builder.Services.AddScoped<AnimalService>();
 builder.Services.AddScoped<UserService>();
 builder.Services.AddScoped<AdoptionService>();
+
 builder.Services.AddScoped<AdoptionApplicationService>();
 
 builder.Services.AddScoped<TemporaryAccommodationService>();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
+builder.Services.AddScoped<AuthService>();
+
+var jwtSettings = builder.Configuration.GetSection("JwtSettings");
+builder.Services.AddAuthentication(options =>
+{
+    options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+    options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+}).AddJwtBearer(options =>
+{
+    options.TokenValidationParameters = new TokenValidationParameters
+    {
+        ValidateIssuer = true,
+        ValidateAudience = true,
+        ValidateLifetime = true,
+        ValidateIssuerSigningKey = true,
+        ValidIssuer = jwtSettings["validIssuer"],
+        ValidAudience = jwtSettings["validAudience"],
+        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtSettings["securityKey"]))
+    };
+});
+
+
+
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
@@ -40,7 +65,7 @@ app.UseHttpsRedirection();
 
 app.UseAuthorization();
 app.UseCors(policy => policy
-    .WithOrigins("http://localhost:3000") // React app address
+    .WithOrigins("http://localhost:3000") 
     .AllowAnyMethod()
     .AllowAnyHeader());
 app.MapControllers();
