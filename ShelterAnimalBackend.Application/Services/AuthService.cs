@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.Logging;
+﻿using BCrypt.Net;
+using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using ShelterAnimalBackend.Core;
@@ -36,7 +37,7 @@ public class AuthService
                 return new AuthResponse(false, null, "Неверный логин или пароль");
             }
 
-            if (user.Password != request.Password)
+            if (!BCrypt.Net.BCrypt.Verify(request.Password, user.Password))
             {
                 return new AuthResponse(false, null, "Неверный логин или пароль");
             }
@@ -59,6 +60,7 @@ public class AuthService
             return new AuthResponse(false, null, "Ошибка генерации токена: " + ex.Message);
         }
     }
+
 
     private string GenerateJwtToken(User user)
     {

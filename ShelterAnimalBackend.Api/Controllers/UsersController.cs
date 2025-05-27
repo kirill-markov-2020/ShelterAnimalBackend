@@ -2,6 +2,10 @@
 using ShelterAnimalBackend.Application.Services;
 using ShelterAnimalBackend.Core.Dtos.Requests;
 using ShelterAnimalBackend.Core.Dtos.Responses;
+using ShelterAnimalBackend.Core.Entities;
+using ShelterAnimalBackend.Core.Interfaces;
+using ShelterAnimalBackend.Core.Mappings;
+using ShelterAnimalBackend.Infrastructure.Repositories;
 
 namespace ShelterAnimalBackend.Api.Controllers;
 
@@ -9,13 +13,15 @@ namespace ShelterAnimalBackend.Api.Controllers;
 [ApiController]
 public class UsersController : ControllerBase
 {
+    private readonly IUserRepository _userRepository;
     private readonly UserService _userService;
     private readonly ILogger<UsersController> _logger;
 
-    public UsersController(UserService userService, ILogger<UsersController> logger)
+    public UsersController(UserService userService, ILogger<UsersController> logger, IUserRepository userRepository)
     {
         _userService = userService;
         _logger = logger;
+        _userRepository = userRepository;
     }
 
     [HttpGet]
@@ -49,33 +55,35 @@ public class UsersController : ControllerBase
     }
 
     [HttpPost]
-    public async Task<ActionResult<UserResponse>> CreateUser([FromBody] CreateUserRequest request)
+    public async Task<UserResponse> CreateAsync(CreateUserRequest request)
     {
-        try
+        if (await _userRepository.EmailExistsAsync(request.Email))
         {
-            if (!ModelState.IsValid)
-            {
-                return BadRequest(ModelState);
-            }
+            throw new ArgumentException("email_taken", "Email уже занят");
+        }
 
-            var createdUser = await _userService.CreateAsync(request);
-            return CreatedAtAction(nameof(GetUserById), new { id = createdUser.Id }, createdUser);
-        }
-        catch (ArgumentException ex)
+        if (await _userRepository.LoginExistsAsync(request.Login))
         {
-            
-            return BadRequest(new
-            {
-                ErrorCode = ex.ParamName, 
-                Message = ex.Message
-            });
+            throw new ArgumentException("login_taken", "Логин уже занят");
         }
-        catch (Exception ex)
+
+        var user = new User
         {
-            _logger.LogError(ex, "Error while creating user");
-            return StatusCode(500, new { Message = "Internal server error" });
-        }
+            Surname = request.Surname,
+            Name = request.Name,
+            Patronymic = request.Patronymic,
+            Email = request.Email,
+            Phone = request.Phone,
+            Login = request.Login,
+            Password = BCrypt.Net.BCrypt.HashPassword(request.Password), 
+            RoleId = request.RoleId
+        };
+
+        await _userRepository.AddAsync(user);
+        return user.ToResponse();
     }
+
+
 
     [HttpPut("{id:int}")]
     public async Task<IActionResult> UpdateUser(int id, [FromBody] UpdateUserRequest request)
