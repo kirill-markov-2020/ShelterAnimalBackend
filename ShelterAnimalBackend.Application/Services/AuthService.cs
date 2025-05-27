@@ -1,6 +1,7 @@
-﻿using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.Logging;
+﻿using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
+using ShelterAnimalBackend.Core;
 using ShelterAnimalBackend.Core.Dtos.Requests;
 using ShelterAnimalBackend.Core.Dtos.Responses;
 using ShelterAnimalBackend.Core.Entities;
@@ -9,21 +10,19 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
 
-namespace ShelterAnimalBackend.Application.Services;
-
 public class AuthService
 {
     private readonly IUserRepository _userRepository;
-    private readonly IConfiguration _configuration;
     private readonly ILogger<AuthService> _logger;
+    private readonly JwtSettings _jwtSettings;
 
     public AuthService(
         IUserRepository userRepository,
-        IConfiguration configuration,
+        IOptions<JwtSettings> jwtSettings,
         ILogger<AuthService> logger)
     {
         _userRepository = userRepository;
-        _configuration = configuration;
+        _jwtSettings = jwtSettings.Value;
         _logger = logger;
     }
 
@@ -66,16 +65,16 @@ public class AuthService
         try
         {
             var securityKey = new SymmetricSecurityKey(
-                Encoding.UTF8.GetBytes(_configuration["JwtSettings:securityKey"]));
+                Encoding.UTF8.GetBytes(_jwtSettings.SecurityKey));
 
             var credentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256);
 
             var claims = new List<Claim>
-        {
-            new Claim(JwtRegisteredClaimNames.Sub, user.Login),
-            new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
-            new Claim(ClaimTypes.NameIdentifier, user.Id.ToString())
-        };
+            {
+                new Claim(JwtRegisteredClaimNames.Sub, user.Login),
+                new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
+                new Claim(ClaimTypes.NameIdentifier, user.Id.ToString())
+            };
 
             if (user.Role != null)
             {
@@ -83,11 +82,10 @@ public class AuthService
             }
 
             var token = new JwtSecurityToken(
-                issuer: _configuration["JwtSettings:validIssuer"],
-                audience: _configuration["JwtSettings:validAudience"],
+                issuer: _jwtSettings.ValidIssuer,
+                audience: _jwtSettings.ValidAudience,
                 claims: claims,
-                expires: DateTime.UtcNow.AddMinutes(Convert.ToDouble(
-                    _configuration["JwtSettings:expiryInMinutes"])),
+                expires: DateTime.UtcNow.AddMinutes(_jwtSettings.ExpiryInMinutes),
                 signingCredentials: credentials
             );
 

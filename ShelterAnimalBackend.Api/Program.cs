@@ -1,6 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using ShelterAnimalBackend.Application.Services;
 using ShelterAnimalBackend.Core.Interfaces;
+using ShelterAnimalBackend.Core;
 using ShelterAnimalBackend.Infrastructure.Data;
 using ShelterAnimalBackend.Infrastructure.Repositories;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -22,6 +23,9 @@ builder.Services.AddScoped<IAdoptionApplicationRepository, AdoptionApplicationRe
 builder.Services.AddScoped<ITemporaryAccommodationRepository, TemporaryAccommodationRepository>();
 builder.Services.AddScoped<AnimalService>();
 builder.Services.AddScoped<UserService>();
+builder.Services.Configure<JwtSettings>(
+    builder.Configuration.GetSection("JwtSettings"));
+
 builder.Services.AddScoped<AdoptionService>();
 
 builder.Services.AddScoped<AdoptionApplicationService>();
