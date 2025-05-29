@@ -7,36 +7,35 @@ using ShelterAnimalBackend.Infrastructure.Repositories;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
+using Microsoft.OpenApi.Models;
+
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddControllers();
-
 
 builder.Services.AddAuthorization();
 
 builder.Services.AddDbContext<AnimalShelterDbContext>(options =>
     options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
+
+// Репозитории и сервисы
 builder.Services.AddScoped<IAnimalRepository, AnimalRepository>();
 builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<IAdoptionRepository, AdoptionRepository>();
 builder.Services.AddScoped<IAdoptionApplicationRepository, AdoptionApplicationRepository>();
 builder.Services.AddScoped<ITemporaryAccommodationRepository, TemporaryAccommodationRepository>();
-builder.Services.AddScoped<AnimalService>();
-builder.Services.AddScoped<UserService>();
 builder.Services.AddScoped<ITypeAnimalRepository, TypeAnimalRepository>();
 builder.Services.AddScoped<IAnimalStatusRepository, AnimalStatusRepository>();
-builder.Services.Configure<JwtSettings>(
-    builder.Configuration.GetSection("JwtSettings"));
 
+builder.Services.AddScoped<AnimalService>();
+builder.Services.AddScoped<UserService>();
 builder.Services.AddScoped<AdoptionService>();
-
 builder.Services.AddScoped<AdoptionApplicationService>();
-
 builder.Services.AddScoped<TemporaryAccommodationService>();
-builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
-
 builder.Services.AddScoped<AuthService>();
+
+// Настройка JWT
+builder.Services.Configure<JwtSettings>(builder.Configuration.GetSection("JwtSettings"));
 
 var jwtSettings = builder.Configuration.GetSection("JwtSettings");
 builder.Services.AddAuthentication(options =>
@@ -57,6 +56,23 @@ builder.Services.AddAuthentication(options =>
     };
 });
 
+// Настройка Swagger
+builder.Services.AddEndpointsApiExplorer();
+builder.Services.AddSwaggerGen(c =>
+{
+    c.SwaggerDoc("v1", new OpenApiInfo { Title = "ShelterAnimalBackend API", Version = "v1" });
+    c.IgnoreObsoleteActions(); // Игнорирует методы с [Obsolete]
+    // ИЛИ можно вручную исключить контроллер:
+    c.DocInclusionPredicate((docName, apiDesc) =>
+    {
+        if (apiDesc.ActionDescriptor.RouteValues.ContainsKey("controller"))
+        {
+            var controllerName = apiDesc.ActionDescriptor.RouteValues["controller"];
+            return controllerName != "FileUpload"; // Исключает FileUploadController
+        }
+        return true;
+    });
+});
 
 
 var app = builder.Build();
@@ -64,16 +80,21 @@ var app = builder.Build();
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
-    app.UseSwaggerUI();
+    app.UseSwaggerUI(c =>
+    {
+        c.SwaggerEndpoint("/swagger/v1/swagger.json", "ShelterAnimalBackend API V1");
+    });
 }
 
 app.UseHttpsRedirection();
-app.UseStaticFiles(); 
+app.UseStaticFiles();
+app.UseAuthentication(); // Добавлено, если используете аутентификацию
 app.UseAuthorization();
 app.UseCors(policy => policy
-    .WithOrigins("http://localhost:3000")
+    .AllowAnyOrigin()
     .AllowAnyMethod()
     .AllowAnyHeader());
+
 app.MapControllers();
 
 app.Run();

@@ -118,6 +118,25 @@ public class AnimalsController : ControllerBase
             return StatusCode(500, "Внутренняя ошибка сервера");
         }
     }
+    [HttpPut("{id}")]
+    public async Task<IActionResult> UpdateAnimal(int id, [FromBody] Animal animal)
+    {
+        try
+        {
+            if (id != animal.Id)
+            {
+                return BadRequest("ID животного не совпадает с ID в URL");
+            }
+
+            await _animalService.UpdateAsync(animal);
+            return NoContent();
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, $"Ошибка при обновлении данных о животном с ID {id}");
+            return StatusCode(500, "Внутренняя ошибка сервера");
+        }
+    }
 
 
 }
