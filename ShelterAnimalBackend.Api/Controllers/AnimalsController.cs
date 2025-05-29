@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using ShelterAnimalBackend.Application.Services;
+using ShelterAnimalBackend.Core.Dtos.Requests;
 using ShelterAnimalBackend.Core.Entities;
 
 namespace ShelterAnimalBackend.Api.Controllers;
@@ -52,7 +53,7 @@ public class AnimalsController : ControllerBase
     }
 
     [HttpPost]
-    public async Task<ActionResult<Animal>> AddAnimal([FromBody] Animal animal)
+    public async Task<ActionResult<Animal>> AddAnimal([FromBody] CreateAnimalDto animalDto)
     {
         try
         {
@@ -61,7 +62,19 @@ public class AnimalsController : ControllerBase
                 return BadRequest(ModelState);
             }
 
+            var animal = new Animal
+            {
+                Name = animalDto.Name,
+                TypeAnimalId = animalDto.TypeAnimalId,
+                Gender = animalDto.Gender,
+                Age = animalDto.Age,
+                AnimalStatusId = animalDto.AnimalStatusId,
+                Description = animalDto.Description,
+                Photo = string.IsNullOrEmpty(animalDto.Photo) ? "/images/заглушка.png" : animalDto.Photo
+            };
+
             await _animalService.AddAsync(animal);
+
             return CreatedAtAction(nameof(GetAnimalById), new { id = animal.Id }, animal);
         }
         catch (Exception ex)
@@ -71,7 +84,6 @@ public class AnimalsController : ControllerBase
         }
     }
 
-    
 
     [HttpDelete("{id}")]
     public async Task<IActionResult> DeleteAnimal(int id)
@@ -92,5 +104,32 @@ public class AnimalsController : ControllerBase
             _logger.LogError(ex, $"Ошибка при удалении животного с ID {id}");
             return StatusCode(500, "Внутренняя ошибка сервера");
         }
+    }
+    [HttpPost("upload")]
+    public async Task<IActionResult> UploadImage(IFormFile file)
+    {
+        if (file == null || file.Length == 0)
+            return BadRequest("Файл не выбран");
+
+        var allowedExtensions = new[] { ".png", ".jpg", ".jpeg" };
+        var fileExtension = Path.GetExtension(file.FileName).ToLowerInvariant();
+
+        if (!allowedExtensions.Contains(fileExtension))
+            return BadRequest("Недопустимый формат файла. Разрешены только PNG, JPG и JPEG.");
+
+        var uploadsFolder = Path.Combine(Directory.GetCurrentDirectory(), "public", "images");
+        if (!Directory.Exists(uploadsFolder))
+            Directory.CreateDirectory(uploadsFolder);
+
+        var uniqueFileName = Guid.NewGuid().ToString() + fileExtension;
+        var filePath = Path.Combine(uploadsFolder, uniqueFileName);
+
+        using (var stream = new FileStream(filePath, FileMode.Create))
+        {
+            await file.CopyToAsync(stream);
+        }
+
+        var relativePath = $"/images/{uniqueFileName}";
+        return Ok(new { filePath = relativePath });
     }
 }

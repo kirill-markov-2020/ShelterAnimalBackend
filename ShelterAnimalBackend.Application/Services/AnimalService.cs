@@ -1,15 +1,19 @@
-﻿using ShelterAnimalBackend.Core.Entities;
+﻿using Microsoft.EntityFrameworkCore;
+using ShelterAnimalBackend.Core.Entities;
 using ShelterAnimalBackend.Core.Interfaces;
+using ShelterAnimalBackend.Infrastructure.Data;
 
 namespace ShelterAnimalBackend.Application.Services;
 
 public class AnimalService
 {
     private readonly IAnimalRepository _animalRepository;
+    private readonly AnimalShelterDbContext _context;
 
-    public AnimalService(IAnimalRepository animalRepository)
+    public AnimalService(IAnimalRepository animalRepository, AnimalShelterDbContext context)
     {
         _animalRepository = animalRepository;
+        _context = context;
     }
 
     public async Task<Animal?> GetByIdAsync(int id)
@@ -24,6 +28,15 @@ public class AnimalService
 
     public async Task AddAsync(Animal animal)
     {
+        // Проверяем существование связанных сущностей
+        var typeExists = await _context.TypeAnimal.AnyAsync(t => t.Id == animal.TypeAnimalId);
+        var statusExists = await _context.AnimalStatus.AnyAsync(s => s.Id == animal.AnimalStatusId);
+
+        if (!typeExists || !statusExists)
+        {
+            throw new ArgumentException("Invalid TypeAnimalId or AnimalStatusId");
+        }
+
         await _animalRepository.AddAsync(animal);
     }
 

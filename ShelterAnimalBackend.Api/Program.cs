@@ -23,6 +23,8 @@ builder.Services.AddScoped<IAdoptionApplicationRepository, AdoptionApplicationRe
 builder.Services.AddScoped<ITemporaryAccommodationRepository, TemporaryAccommodationRepository>();
 builder.Services.AddScoped<AnimalService>();
 builder.Services.AddScoped<UserService>();
+builder.Services.AddScoped<ITypeAnimalRepository, TypeAnimalRepository>();
+builder.Services.AddScoped<IAnimalStatusRepository, AnimalStatusRepository>();
 builder.Services.Configure<JwtSettings>(
     builder.Configuration.GetSection("JwtSettings"));
 
@@ -66,7 +68,7 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
-
+app.UseStaticFiles();
 app.UseAuthorization();
 app.UseCors(policy => policy
     .WithOrigins("http://localhost:3000") 
