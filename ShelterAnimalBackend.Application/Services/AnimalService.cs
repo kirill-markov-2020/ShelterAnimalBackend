@@ -28,7 +28,6 @@ public class AnimalService
 
     public async Task AddAsync(Animal animal)
     {
-        // Проверяем существование связанных сущностей
         var typeExists = await _context.TypeAnimal.AnyAsync(t => t.Id == animal.TypeAnimalId);
         var statusExists = await _context.AnimalStatus.AnyAsync(s => s.Id == animal.AnimalStatusId);
 

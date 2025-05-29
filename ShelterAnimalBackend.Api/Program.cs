@@ -18,7 +18,7 @@ builder.Services.AddAuthorization();
 builder.Services.AddDbContext<AnimalShelterDbContext>(options =>
     options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
 
-// Репозитории и сервисы
+
 builder.Services.AddScoped<IAnimalRepository, AnimalRepository>();
 builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<IAdoptionRepository, AdoptionRepository>();
@@ -34,7 +34,7 @@ builder.Services.AddScoped<AdoptionApplicationService>();
 builder.Services.AddScoped<TemporaryAccommodationService>();
 builder.Services.AddScoped<AuthService>();
 
-// Настройка JWT
+
 builder.Services.Configure<JwtSettings>(builder.Configuration.GetSection("JwtSettings"));
 
 var jwtSettings = builder.Configuration.GetSection("JwtSettings");
@@ -56,19 +56,18 @@ builder.Services.AddAuthentication(options =>
     };
 });
 
-// Настройка Swagger
+
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(c =>
 {
     c.SwaggerDoc("v1", new OpenApiInfo { Title = "ShelterAnimalBackend API", Version = "v1" });
-    c.IgnoreObsoleteActions(); // Игнорирует методы с [Obsolete]
-    // ИЛИ можно вручную исключить контроллер:
+    c.IgnoreObsoleteActions();
     c.DocInclusionPredicate((docName, apiDesc) =>
     {
         if (apiDesc.ActionDescriptor.RouteValues.ContainsKey("controller"))
         {
             var controllerName = apiDesc.ActionDescriptor.RouteValues["controller"];
-            return controllerName != "FileUpload"; // Исключает FileUploadController
+            return controllerName != "FileUpload";
         }
         return true;
     });
@@ -88,7 +87,7 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 app.UseStaticFiles();
-app.UseAuthentication(); // Добавлено, если используете аутентификацию
+app.UseAuthentication(); 
 app.UseAuthorization();
 app.UseCors(policy => policy
     .AllowAnyOrigin()
