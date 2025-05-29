@@ -98,8 +98,19 @@ public class AnimalsController : ControllerBase
                 return NotFound($"Животное с ID {id} не найдено");
             }
 
+            if (!string.IsNullOrEmpty(animal.Photo) && animal.Photo != "http://localhost:5164/images/заглушка.png")
+            {
+                var fileName = Path.GetFileName(animal.Photo);
+                var filePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "images", fileName);
+
+                if (System.IO.File.Exists(filePath))
+                {
+                    System.IO.File.Delete(filePath);
+                }
+            }
+
             await _animalService.DeleteAsync(id);
-            return NoContent(); 
+            return NoContent();
         }
         catch (Exception ex)
         {
@@ -107,5 +118,6 @@ public class AnimalsController : ControllerBase
             return StatusCode(500, "Внутренняя ошибка сервера");
         }
     }
-    
+
+
 }
