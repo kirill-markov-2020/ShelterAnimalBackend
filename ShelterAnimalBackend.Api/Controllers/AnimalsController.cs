@@ -70,7 +70,7 @@ public class AnimalsController : ControllerBase
                 Age = animalDto.Age,
                 AnimalStatusId = animalDto.AnimalStatusId,
                 Description = animalDto.Description,
-                Photo = string.IsNullOrEmpty(animalDto.Photo) ? "/images/заглушка.png" : animalDto.Photo
+                Photo = string.IsNullOrEmpty(animalDto.Photo) ? "http://localhost:5164/images/заглушка.png" : animalDto.Photo
             };
 
             await _animalService.AddAsync(animal);
@@ -83,6 +83,8 @@ public class AnimalsController : ControllerBase
             return StatusCode(500, "Внутренняя ошибка сервера");
         }
     }
+
+
 
 
     [HttpDelete("{id}")]
@@ -105,31 +107,5 @@ public class AnimalsController : ControllerBase
             return StatusCode(500, "Внутренняя ошибка сервера");
         }
     }
-    [HttpPost("upload")]
-    public async Task<IActionResult> UploadImage(IFormFile file)
-    {
-        if (file == null || file.Length == 0)
-            return BadRequest("Файл не выбран");
-
-        var allowedExtensions = new[] { ".png", ".jpg", ".jpeg" };
-        var fileExtension = Path.GetExtension(file.FileName).ToLowerInvariant();
-
-        if (!allowedExtensions.Contains(fileExtension))
-            return BadRequest("Недопустимый формат файла. Разрешены только PNG, JPG и JPEG.");
-
-        var uploadsFolder = Path.Combine(Directory.GetCurrentDirectory(), "public", "images");
-        if (!Directory.Exists(uploadsFolder))
-            Directory.CreateDirectory(uploadsFolder);
-
-        var uniqueFileName = Guid.NewGuid().ToString() + fileExtension;
-        var filePath = Path.Combine(uploadsFolder, uniqueFileName);
-
-        using (var stream = new FileStream(filePath, FileMode.Create))
-        {
-            await file.CopyToAsync(stream);
-        }
-
-        var relativePath = $"/images/{uniqueFileName}";
-        return Ok(new { filePath = relativePath });
-    }
+    
 }

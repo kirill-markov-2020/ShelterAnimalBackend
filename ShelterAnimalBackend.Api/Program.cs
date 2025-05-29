@@ -68,10 +68,10 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
-app.UseStaticFiles();
+app.UseStaticFiles(); 
 app.UseAuthorization();
 app.UseCors(policy => policy
-    .WithOrigins("http://localhost:3000") 
+    .WithOrigins("http://localhost:3000")
     .AllowAnyMethod()
     .AllowAnyHeader());
 app.MapControllers();
