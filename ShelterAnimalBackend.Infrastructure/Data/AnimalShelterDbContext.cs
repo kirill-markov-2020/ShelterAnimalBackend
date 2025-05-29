@@ -19,7 +19,6 @@ namespace ShelterAnimalBackend.Infrastructure.Data
         public DbSet<AdoptionApplication> AdoptionApplication { get; set; }
         public DbSet<TypeAnimal> TypeAnimal { get; set; }
         public DbSet<StatusAdoption> StatusAdoption { get; set; }
-        public DbSet<Employee> Employee { get; set; }
         public DbSet<TemporaryAccommodation> TemporaryAccommodation { get; set; }
         public DbSet<Role> Role { get; set; }
 

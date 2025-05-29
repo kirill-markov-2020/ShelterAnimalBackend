@@ -4,10 +4,12 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 #nullable disable
 
-namespace ShelterAnimalBackend.Migrations
+namespace ShelterAnimalBackend.Infrastructure.Migrations
 {
-    public partial class Migration1 : Migration
+    /// <inheritdoc />
+    public partial class sdfsdfsdf : Migration
     {
+        /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.CreateTable(
@@ -115,27 +117,6 @@ namespace ShelterAnimalBackend.Migrations
                         name: "FK_Animal_TypeAnimal_TypeAnimalId",
                         column: x => x.TypeAnimalId,
                         principalTable: "TypeAnimal",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "Employee",
-                columns: table => new
-                {
-                    Id = table.Column<int>(type: "integer", nullable: false)
-                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    UserId = table.Column<int>(type: "integer", nullable: false),
-                    IsAdmin = table.Column<bool>(type: "boolean", nullable: false),
-                    HireDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Employee", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_Employee_User_UserId",
-                        column: x => x.UserId,
-                        principalTable: "User",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
@@ -270,11 +251,6 @@ namespace ShelterAnimalBackend.Migrations
                 column: "TypeAnimalId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Employee_UserId",
-                table: "Employee",
-                column: "UserId");
-
-            migrationBuilder.CreateIndex(
                 name: "IX_TemporaryAccommodation_AnimalId",
                 table: "TemporaryAccommodation",
                 column: "AnimalId");
@@ -298,9 +274,6 @@ namespace ShelterAnimalBackend.Migrations
 
             migrationBuilder.DropTable(
                 name: "AdoptionApplication");
-
-            migrationBuilder.DropTable(
-                name: "Employee");
 
             migrationBuilder.DropTable(
                 name: "TemporaryAccommodation");

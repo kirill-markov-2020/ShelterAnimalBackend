@@ -36,7 +36,7 @@ public class AuthController : ControllerBase
                 return BadRequest(new { message = result.ErrorMessage });
             }
 
-            return Ok(new { token = result.Token });
+            return Ok(new { token = result.Token, role = result.Role });
         }
         catch (Exception ex)
         {
@@ -44,5 +44,6 @@ public class AuthController : ControllerBase
             return StatusCode(500, new { message = "Внутренняя ошибка сервера" });
         }
     }
-    
+
+
 }

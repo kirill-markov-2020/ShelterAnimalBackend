@@ -5,9 +5,10 @@ using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using ShelterAnimalBackend.Infrastructure.Data;
+
 #nullable disable
 
-namespace ShelterAnimalBackend.Migrations
+namespace ShelterAnimalBackend.Infrastructure.Migrations
 {
     [DbContext(typeof(AnimalShelterDbContext))]
     partial class AnimalShelterDbContextModelSnapshot : ModelSnapshot
@@ -21,7 +22,7 @@ namespace ShelterAnimalBackend.Migrations
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
 
-            modelBuilder.Entity("TestLibrary.Models.Adoption", b =>
+            modelBuilder.Entity("ShelterAnimalBackend.Core.Entities.Adoption", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -53,7 +54,7 @@ namespace ShelterAnimalBackend.Migrations
                     b.ToTable("Adoption");
                 });
 
-            modelBuilder.Entity("TestLibrary.Models.AdoptionApplication", b =>
+            modelBuilder.Entity("ShelterAnimalBackend.Core.Entities.AdoptionApplication", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -91,7 +92,7 @@ namespace ShelterAnimalBackend.Migrations
                     b.ToTable("AdoptionApplication");
                 });
 
-            modelBuilder.Entity("TestLibrary.Models.Animal", b =>
+            modelBuilder.Entity("ShelterAnimalBackend.Core.Entities.Animal", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -133,7 +134,7 @@ namespace ShelterAnimalBackend.Migrations
                     b.ToTable("Animal");
                 });
 
-            modelBuilder.Entity("TestLibrary.Models.AnimalStatus", b =>
+            modelBuilder.Entity("ShelterAnimalBackend.Core.Entities.AnimalStatus", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -150,31 +151,7 @@ namespace ShelterAnimalBackend.Migrations
                     b.ToTable("AnimalStatus");
                 });
 
-            modelBuilder.Entity("TestLibrary.Models.Employee", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("integer");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
-
-                    b.Property<DateTime>("HireDate")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<bool>("IsAdmin")
-                        .HasColumnType("boolean");
-
-                    b.Property<int>("UserId")
-                        .HasColumnType("integer");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("UserId");
-
-                    b.ToTable("Employee");
-                });
-
-            modelBuilder.Entity("TestLibrary.Models.Role", b =>
+            modelBuilder.Entity("ShelterAnimalBackend.Core.Entities.Role", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -191,7 +168,7 @@ namespace ShelterAnimalBackend.Migrations
                     b.ToTable("Role");
                 });
 
-            modelBuilder.Entity("TestLibrary.Models.StatusAdoption", b =>
+            modelBuilder.Entity("ShelterAnimalBackend.Core.Entities.StatusAdoption", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -208,7 +185,7 @@ namespace ShelterAnimalBackend.Migrations
                     b.ToTable("StatusAdoption");
                 });
 
-            modelBuilder.Entity("TestLibrary.Models.TemporaryAccommodation", b =>
+            modelBuilder.Entity("ShelterAnimalBackend.Core.Entities.TemporaryAccommodation", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -240,7 +217,7 @@ namespace ShelterAnimalBackend.Migrations
                     b.ToTable("TemporaryAccommodation");
                 });
 
-            modelBuilder.Entity("TestLibrary.Models.TypeAnimal", b =>
+            modelBuilder.Entity("ShelterAnimalBackend.Core.Entities.TypeAnimal", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -257,7 +234,7 @@ namespace ShelterAnimalBackend.Migrations
                     b.ToTable("TypeAnimal");
                 });
 
-            modelBuilder.Entity("TestLibrary.Models.User", b =>
+            modelBuilder.Entity("ShelterAnimalBackend.Core.Entities.User", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -303,15 +280,15 @@ namespace ShelterAnimalBackend.Migrations
                     b.ToTable("User");
                 });
 
-            modelBuilder.Entity("TestLibrary.Models.Adoption", b =>
+            modelBuilder.Entity("ShelterAnimalBackend.Core.Entities.Adoption", b =>
                 {
-                    b.HasOne("TestLibrary.Models.Animal", "Animal")
+                    b.HasOne("ShelterAnimalBackend.Core.Entities.Animal", "Animal")
                         .WithMany()
                         .HasForeignKey("AnimalId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("TestLibrary.Models.User", "User")
+                    b.HasOne("ShelterAnimalBackend.Core.Entities.User", "User")
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -322,21 +299,21 @@ namespace ShelterAnimalBackend.Migrations
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("TestLibrary.Models.AdoptionApplication", b =>
+            modelBuilder.Entity("ShelterAnimalBackend.Core.Entities.AdoptionApplication", b =>
                 {
-                    b.HasOne("TestLibrary.Models.Animal", "Animal")
+                    b.HasOne("ShelterAnimalBackend.Core.Entities.Animal", "Animal")
                         .WithMany()
                         .HasForeignKey("AnimalId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("TestLibrary.Models.StatusAdoption", "StatusAdoption")
+                    b.HasOne("ShelterAnimalBackend.Core.Entities.StatusAdoption", "StatusAdoption")
                         .WithMany()
                         .HasForeignKey("StatusAdoptionId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("TestLibrary.Models.User", "User")
+                    b.HasOne("ShelterAnimalBackend.Core.Entities.User", "User")
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -349,15 +326,15 @@ namespace ShelterAnimalBackend.Migrations
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("TestLibrary.Models.Animal", b =>
+            modelBuilder.Entity("ShelterAnimalBackend.Core.Entities.Animal", b =>
                 {
-                    b.HasOne("TestLibrary.Models.AnimalStatus", "AnimalStatus")
+                    b.HasOne("ShelterAnimalBackend.Core.Entities.AnimalStatus", "AnimalStatus")
                         .WithMany()
                         .HasForeignKey("AnimalStatusId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("TestLibrary.Models.TypeAnimal", "TypeAnimal")
+                    b.HasOne("ShelterAnimalBackend.Core.Entities.TypeAnimal", "TypeAnimal")
                         .WithMany()
                         .HasForeignKey("TypeAnimalId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -368,26 +345,15 @@ namespace ShelterAnimalBackend.Migrations
                     b.Navigation("TypeAnimal");
                 });
 
-            modelBuilder.Entity("TestLibrary.Models.Employee", b =>
+            modelBuilder.Entity("ShelterAnimalBackend.Core.Entities.TemporaryAccommodation", b =>
                 {
-                    b.HasOne("TestLibrary.Models.User", "User")
-                        .WithMany()
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("User");
-                });
-
-            modelBuilder.Entity("TestLibrary.Models.TemporaryAccommodation", b =>
-                {
-                    b.HasOne("TestLibrary.Models.Animal", "Animal")
+                    b.HasOne("ShelterAnimalBackend.Core.Entities.Animal", "Animal")
                         .WithMany()
                         .HasForeignKey("AnimalId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("TestLibrary.Models.User", "User")
+                    b.HasOne("ShelterAnimalBackend.Core.Entities.User", "User")
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -398,9 +364,9 @@ namespace ShelterAnimalBackend.Migrations
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("TestLibrary.Models.User", b =>
+            modelBuilder.Entity("ShelterAnimalBackend.Core.Entities.User", b =>
                 {
-                    b.HasOne("TestLibrary.Models.Role", "Role")
+                    b.HasOne("ShelterAnimalBackend.Core.Entities.Role", "Role")
                         .WithMany()
                         .HasForeignKey("RoleId")
                         .OnDelete(DeleteBehavior.Cascade)
