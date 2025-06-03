@@ -27,31 +27,15 @@ public class UsersController : ControllerBase
     [HttpGet]
     public async Task<ActionResult<List<UserResponse>>> GetAllUsers()
     {
-        try
-        {
             var users = await _userService.GetAllAsync();
             return Ok(users);
-        }
-        catch (Exception ex)
-        {
-            _logger.LogError(ex, "Error while getting all users");
-            return StatusCode(500, new { Message = "Internal server error" });
-        }
     }
 
     [HttpGet("{id:int}")]
     public async Task<ActionResult<UserResponse>> GetUserById(int id)
     {
-        try
-        {
             var user = await _userService.GetByIdAsync(id);
-            return user == null ? NotFound(new { Message = $"User with ID {id} not found" }) : Ok(user);
-        }
-        catch (Exception ex)
-        {
-            _logger.LogError(ex, $"Error while getting user with ID {id}");
-            return StatusCode(500, new { Message = "Internal server error" });
-        }
+            return user == null ? NotFound(new { Message = $"User with ID {id} not found" }) : Ok(user);        
     }
 
     [HttpPost]
@@ -88,8 +72,6 @@ public class UsersController : ControllerBase
     [HttpPut("{id:int}")]
     public async Task<IActionResult> UpdateUser(int id, [FromBody] UpdateUserRequest request)
     {
-        try
-        {
             if (id != request.Id)
             {
                 return BadRequest(new { Message = "ID in URL and request body do not match" });
@@ -104,26 +86,12 @@ public class UsersController : ControllerBase
             return updatedUser == null
                 ? NotFound(new { Message = $"User with ID {id} not found" })
                 : NoContent();
-        }
-        catch (Exception ex)
-        {
-            _logger.LogError(ex, $"Error while updating user with ID {id}");
-            return StatusCode(500, new { Message = "Internal server error" });
-        }
     }
 
     [HttpDelete("{id:int}")]
     public async Task<IActionResult> DeleteUser(int id)
-    {
-        try
-        {
-            var result = await _userService.DeleteAsync(id);
-            return result ? NoContent() : NotFound(new { Message = $"User with ID {id} not found" });
-        }
-        catch (Exception ex)
-        {
-            _logger.LogError(ex, $"Error while deleting user with ID {id}");
-            return StatusCode(500, new { Message = "Internal server error" });
-        }
+    {        
+        var result = await _userService.DeleteAsync(id);
+        return result ? NoContent() : NotFound(new { Message = $"User with ID {id} not found" });        
     }
 }

@@ -19,33 +19,19 @@ public class TypeAnimalController : ControllerBase
     [HttpGet]
     public async Task<ActionResult<List<TypeAnimal>>> GetAllTypeAnimals()
     {
-        try
-        {
             var typeAnimals = await _typeAnimalRepository.GetAllAsync();
-            return Ok(typeAnimals);
-        }
-        catch (Exception ex)
-        {
-            return StatusCode(500, "Внутренняя ошибка сервера");
-        }
+            return Ok(typeAnimals);        
     }
 
     [HttpPost]
     public async Task<ActionResult<TypeAnimal>> AddTypeAnimal([FromBody] TypeAnimal typeAnimal)
-    {
-        try
+    {       
+        if (!ModelState.IsValid)
         {
-            if (!ModelState.IsValid)
-            {
-                return BadRequest(ModelState);
-            }
+            return BadRequest(ModelState);
+        }
 
-            await _typeAnimalRepository.AddAsync(typeAnimal);
-            return CreatedAtAction(nameof(GetAllTypeAnimals), new { id = typeAnimal.Id }, typeAnimal);
-        }
-        catch (Exception ex)
-        {
-            return StatusCode(500, "Внутренняя ошибка сервера");
-        }
+        await _typeAnimalRepository.AddAsync(typeAnimal);
+        return CreatedAtAction(nameof(GetAllTypeAnimals), new { id = typeAnimal.Id }, typeAnimal);        
     }
 }

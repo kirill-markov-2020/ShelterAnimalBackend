@@ -19,33 +19,24 @@ public class AnimalStatusController : ControllerBase
     [HttpGet]
     public async Task<ActionResult<List<AnimalStatus>>> GetAllAnimalStatuses()
     {
-        try
-        {
-            var animalStatuses = await _animalStatusRepository.GetAllAsync();
-            return Ok(animalStatuses);
-        }
-        catch (Exception ex)
-        {
-            return StatusCode(500, "Внутренняя ошибка сервера");
-        }
+        
+        var animalStatuses = await _animalStatusRepository.GetAllAsync();
+        return Ok(animalStatuses);
+        
+       
     }
 
     [HttpPost]
     public async Task<ActionResult<AnimalStatus>> AddAnimalStatus([FromBody] AnimalStatus animalStatus)
     {
-        try
+        
+        if (!ModelState.IsValid)
         {
-            if (!ModelState.IsValid)
-            {
-                return BadRequest(ModelState);
-            }
+            return BadRequest(ModelState);
+        }
 
-            await _animalStatusRepository.AddAsync(animalStatus);
-            return CreatedAtAction(nameof(GetAllAnimalStatuses), new { id = animalStatus.Id }, animalStatus);
-        }
-        catch (Exception ex)
-        {
-            return StatusCode(500, "Внутренняя ошибка сервера");
-        }
+        await _animalStatusRepository.AddAsync(animalStatus);
+        return CreatedAtAction(nameof(GetAllAnimalStatuses), new { id = animalStatus.Id }, animalStatus);
+        
     }
 }

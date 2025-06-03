@@ -1,13 +1,14 @@
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
+using Microsoft.OpenApi.Models;
+using ShelterAnimalBackend.Api.Middleware;
 using ShelterAnimalBackend.Application.Services;
-using ShelterAnimalBackend.Core.Interfaces;
 using ShelterAnimalBackend.Core;
+using ShelterAnimalBackend.Core.Interfaces;
 using ShelterAnimalBackend.Infrastructure.Data;
 using ShelterAnimalBackend.Infrastructure.Repositories;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.IdentityModel.Tokens;
 using System.Text;
-using Microsoft.OpenApi.Models;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -84,7 +85,7 @@ if (app.Environment.IsDevelopment())
         c.SwaggerEndpoint("/swagger/v1/swagger.json", "ShelterAnimalBackend API V1");
     });
 }
-
+app.UseMiddleware<ErrorHandlingMiddleware>();
 app.UseHttpsRedirection();
 app.UseStaticFiles();
 app.UseAuthentication(); 
