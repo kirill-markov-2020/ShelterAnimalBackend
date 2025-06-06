@@ -89,16 +89,46 @@ public class AnimalsController : ControllerBase
         return NoContent();        
     }
     [HttpPut("{id}")]
-    public async Task<IActionResult> UpdateAnimal(int id, [FromBody] Animal animal)
-    {        
-        if (id != animal.Id)
+    public async Task<IActionResult> UpdateAnimal(int id, [FromBody] Animal updatedAnimal)
+    {
+        if (updatedAnimal == null || updatedAnimal.Id == 0)
+        {
+            return BadRequest("Некорректные данные животного");
+        }
+        if (id != updatedAnimal.Id)
         {
             return BadRequest("ID животного не совпадает с ID в URL");
         }
+        var existingAnimal = await _animalService.GetByIdAsync(id);
+        if (existingAnimal == null)
+        {
+            return NotFound($"Животное с ID {id} не найдено");
+        }
+        existingAnimal.Name = updatedAnimal.Name;
+        existingAnimal.TypeAnimalId = updatedAnimal.TypeAnimalId;
+        existingAnimal.Gender = updatedAnimal.Gender;
+        existingAnimal.Age = updatedAnimal.Age;
+        existingAnimal.AnimalStatusId = updatedAnimal.AnimalStatusId;
+        existingAnimal.Description = updatedAnimal.Description;
+        if (!string.IsNullOrEmpty(updatedAnimal.Photo) && updatedAnimal.Photo != "http://localhost:5164/images/заглушка.png")
+        {
+            var fileName = Path.GetFileName(updatedAnimal.Photo);
+            var filePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "images", fileName);
 
-        await _animalService.UpdateAsync(animal);
-        return NoContent();       
+            if (!System.IO.File.Exists(filePath))
+            {
+                existingAnimal.Photo = "http://localhost:5164/images/заглушка.png";
+            }
+            else
+            {
+                existingAnimal.Photo = updatedAnimal.Photo;
+            }
+        }
+        else
+        {
+            existingAnimal.Photo = "http://localhost:5164/images/заглушка.png";
+        }
+        await _animalService.UpdateAsync(existingAnimal);
+        return NoContent();
     }
-
-
 }

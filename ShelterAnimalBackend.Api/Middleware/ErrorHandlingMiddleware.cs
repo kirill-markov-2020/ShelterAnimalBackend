@@ -28,8 +28,8 @@ namespace ShelterAnimalBackend.Api.Middleware
         private static Task HandleExceptionAsync(HttpContext context, Exception exception)
         {
             var code = HttpStatusCode.InternalServerError;
-            var result = JsonSerializer.Serialize(new { error = "При обработке вашего запроса произошла ошибка.",
-                details = exception.Message });
+            var result = JsonSerializer.Serialize(new { error = "При обработке вашего запроса произошла ошибка."
+            });
             context.Response.ContentType = "application/json";
             context.Response.StatusCode = (int)code;
             return context.Response.WriteAsync(result);
