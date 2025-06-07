@@ -35,7 +35,7 @@ public class AdoptionRepository : IAdoptionRepository
         return await _context.Adoption
             .Include(a => a.User)
             .Include(a => a.Animal)
-            .Where(a => a.ClientId == userId)
+            .Where(a => a.UserId == userId)
             .ToListAsync();
     }
 

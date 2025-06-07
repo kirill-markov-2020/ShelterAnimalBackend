@@ -7,7 +7,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace ShelterAnimalBackend.Infrastructure.Migrations
 {
     /// <inheritdoc />
-    public partial class sdfsdfsdf : Migration
+    public partial class first : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -96,9 +96,9 @@ namespace ShelterAnimalBackend.Infrastructure.Migrations
                 {
                     Id = table.Column<int>(type: "integer", nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    Name = table.Column<string>(type: "text", nullable: false),
+                    Name = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: false),
                     TypeAnimalId = table.Column<int>(type: "integer", nullable: false),
-                    Gender = table.Column<string>(type: "text", nullable: false),
+                    Gender = table.Column<string>(type: "character varying(20)", maxLength: 20, nullable: false),
                     Age = table.Column<int>(type: "integer", nullable: false),
                     AnimalStatusId = table.Column<int>(type: "integer", nullable: false),
                     Description = table.Column<string>(type: "text", nullable: false),
@@ -127,7 +127,6 @@ namespace ShelterAnimalBackend.Infrastructure.Migrations
                 {
                     Id = table.Column<int>(type: "integer", nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    ClientId = table.Column<int>(type: "integer", nullable: false),
                     UserId = table.Column<int>(type: "integer", nullable: false),
                     AnimalId = table.Column<int>(type: "integer", nullable: false),
                     ApplicationDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
@@ -156,7 +155,6 @@ namespace ShelterAnimalBackend.Infrastructure.Migrations
                 {
                     Id = table.Column<int>(type: "integer", nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    ClientId = table.Column<int>(type: "integer", nullable: false),
                     UserId = table.Column<int>(type: "integer", nullable: false),
                     AnimalId = table.Column<int>(type: "integer", nullable: false),
                     StatusAdoptionId = table.Column<int>(type: "integer", nullable: false),

@@ -39,32 +39,40 @@ public class UsersController : ControllerBase
     }
 
     [HttpPost]
-    public async Task<UserResponse> CreateAsync(CreateUserRequest request)
+    public async Task<ActionResult<UserResponse>> CreateAsync(CreateUserRequest request)
     {
-        if (await _userRepository.EmailExistsAsync(request.Email))
+        try
         {
-            throw new ArgumentException("email_taken", "Email уже занят");
+            if (await _userRepository.EmailExistsAsync(request.Email))
+            {
+                return Conflict(new { Message = "Email уже занят" });
+            }
+
+            if (await _userRepository.LoginExistsAsync(request.Login))
+            {
+                return Conflict(new { Message = "Логин уже занят" });
+            }
+
+            var user = new User
+            {
+                Surname = request.Surname,
+                Name = request.Name,
+                Patronymic = request.Patronymic,
+                Email = request.Email,
+                Phone = request.Phone,
+                Login = request.Login,
+                Password = BCrypt.Net.BCrypt.HashPassword(request.Password),
+                RoleId = request.RoleId
+            };
+
+            await _userRepository.AddAsync(user);
+            return CreatedAtAction(nameof(GetUserById), new { id = user.Id }, user.ToResponse());
         }
-
-        if (await _userRepository.LoginExistsAsync(request.Login))
+        catch (Exception ex)
         {
-            throw new ArgumentException("login_taken", "Логин уже занят");
+            _logger.LogError(ex, "Error creating user");
+            return StatusCode(500, new { Message = "При обработке вашего запроса произошла ошибка", Details = ex.Message });
         }
-
-        var user = new User
-        {
-            Surname = request.Surname,
-            Name = request.Name,
-            Patronymic = request.Patronymic,
-            Email = request.Email,
-            Phone = request.Phone,
-            Login = request.Login,
-            Password = BCrypt.Net.BCrypt.HashPassword(request.Password), 
-            RoleId = request.RoleId
-        };
-
-        await _userRepository.AddAsync(user);
-        return user.ToResponse();
     }
 
 

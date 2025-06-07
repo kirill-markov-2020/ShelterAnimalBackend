@@ -22,6 +22,50 @@ namespace ShelterAnimalBackend.Infrastructure.Migrations
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
 
+            modelBuilder.Entity("Animal", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("Age")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("AnimalStatusId")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("Gender")
+                        .IsRequired()
+                        .HasMaxLength(20)
+                        .HasColumnType("character varying(20)");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)");
+
+                    b.Property<string>("Photo")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<int>("TypeAnimalId")
+                        .HasColumnType("integer");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("AnimalStatusId");
+
+                    b.HasIndex("TypeAnimalId");
+
+                    b.ToTable("Animal");
+                });
+
             modelBuilder.Entity("ShelterAnimalBackend.Core.Entities.Adoption", b =>
                 {
                     b.Property<int>("Id")
@@ -35,9 +79,6 @@ namespace ShelterAnimalBackend.Infrastructure.Migrations
 
                     b.Property<DateTime>("ApplicationDate")
                         .HasColumnType("timestamp with time zone");
-
-                    b.Property<int>("ClientId")
-                        .HasColumnType("integer");
 
                     b.Property<int>("EmployeeId")
                         .HasColumnType("integer");
@@ -68,9 +109,6 @@ namespace ShelterAnimalBackend.Infrastructure.Migrations
                     b.Property<DateTime>("ApplicationDate")
                         .HasColumnType("timestamp with time zone");
 
-                    b.Property<int>("ClientId")
-                        .HasColumnType("integer");
-
                     b.Property<string>("Description")
                         .IsRequired()
                         .HasColumnType("text");
@@ -90,48 +128,6 @@ namespace ShelterAnimalBackend.Infrastructure.Migrations
                     b.HasIndex("UserId");
 
                     b.ToTable("AdoptionApplication");
-                });
-
-            modelBuilder.Entity("ShelterAnimalBackend.Core.Entities.Animal", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("integer");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
-
-                    b.Property<int>("Age")
-                        .HasColumnType("integer");
-
-                    b.Property<int>("AnimalStatusId")
-                        .HasColumnType("integer");
-
-                    b.Property<string>("Description")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<string>("Gender")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<string>("Photo")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<int>("TypeAnimalId")
-                        .HasColumnType("integer");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("AnimalStatusId");
-
-                    b.HasIndex("TypeAnimalId");
-
-                    b.ToTable("Animal");
                 });
 
             modelBuilder.Entity("ShelterAnimalBackend.Core.Entities.AnimalStatus", b =>
@@ -234,7 +230,7 @@ namespace ShelterAnimalBackend.Infrastructure.Migrations
                     b.ToTable("TypeAnimal");
                 });
 
-            modelBuilder.Entity("ShelterAnimalBackend.Core.Entities.User", b =>
+            modelBuilder.Entity("User", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -280,53 +276,7 @@ namespace ShelterAnimalBackend.Infrastructure.Migrations
                     b.ToTable("User");
                 });
 
-            modelBuilder.Entity("ShelterAnimalBackend.Core.Entities.Adoption", b =>
-                {
-                    b.HasOne("ShelterAnimalBackend.Core.Entities.Animal", "Animal")
-                        .WithMany()
-                        .HasForeignKey("AnimalId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("ShelterAnimalBackend.Core.Entities.User", "User")
-                        .WithMany()
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Animal");
-
-                    b.Navigation("User");
-                });
-
-            modelBuilder.Entity("ShelterAnimalBackend.Core.Entities.AdoptionApplication", b =>
-                {
-                    b.HasOne("ShelterAnimalBackend.Core.Entities.Animal", "Animal")
-                        .WithMany()
-                        .HasForeignKey("AnimalId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("ShelterAnimalBackend.Core.Entities.StatusAdoption", "StatusAdoption")
-                        .WithMany()
-                        .HasForeignKey("StatusAdoptionId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("ShelterAnimalBackend.Core.Entities.User", "User")
-                        .WithMany()
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Animal");
-
-                    b.Navigation("StatusAdoption");
-
-                    b.Navigation("User");
-                });
-
-            modelBuilder.Entity("ShelterAnimalBackend.Core.Entities.Animal", b =>
+            modelBuilder.Entity("Animal", b =>
                 {
                     b.HasOne("ShelterAnimalBackend.Core.Entities.AnimalStatus", "AnimalStatus")
                         .WithMany()
@@ -345,15 +295,15 @@ namespace ShelterAnimalBackend.Infrastructure.Migrations
                     b.Navigation("TypeAnimal");
                 });
 
-            modelBuilder.Entity("ShelterAnimalBackend.Core.Entities.TemporaryAccommodation", b =>
+            modelBuilder.Entity("ShelterAnimalBackend.Core.Entities.Adoption", b =>
                 {
-                    b.HasOne("ShelterAnimalBackend.Core.Entities.Animal", "Animal")
+                    b.HasOne("Animal", "Animal")
                         .WithMany()
                         .HasForeignKey("AnimalId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("ShelterAnimalBackend.Core.Entities.User", "User")
+                    b.HasOne("User", "User")
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -364,7 +314,53 @@ namespace ShelterAnimalBackend.Infrastructure.Migrations
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("ShelterAnimalBackend.Core.Entities.User", b =>
+            modelBuilder.Entity("ShelterAnimalBackend.Core.Entities.AdoptionApplication", b =>
+                {
+                    b.HasOne("Animal", "Animal")
+                        .WithMany()
+                        .HasForeignKey("AnimalId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("ShelterAnimalBackend.Core.Entities.StatusAdoption", "StatusAdoption")
+                        .WithMany()
+                        .HasForeignKey("StatusAdoptionId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("User", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Animal");
+
+                    b.Navigation("StatusAdoption");
+
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("ShelterAnimalBackend.Core.Entities.TemporaryAccommodation", b =>
+                {
+                    b.HasOne("Animal", "Animal")
+                        .WithMany()
+                        .HasForeignKey("AnimalId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("User", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Animal");
+
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("User", b =>
                 {
                     b.HasOne("ShelterAnimalBackend.Core.Entities.Role", "Role")
                         .WithMany()
