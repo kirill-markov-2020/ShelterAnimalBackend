@@ -22,27 +22,20 @@ public class AuthController : ControllerBase
     [HttpPost("login")]
     public async Task<IActionResult> Login([FromBody] LoginRequest request)
     {
-        try
+        if (!ModelState.IsValid)
         {
-            if (!ModelState.IsValid)
-            {
-                return BadRequest(new { message = "Некорректные данные" });
-            }
-
-            var result = await _authService.Login(request);
-
-            if (!result.IsSuccess)
-            {
-                return BadRequest(new { message = result.ErrorMessage });
-            }
-
-            return Ok(new { token = result.Token });
+            return BadRequest(new { message = "Некорректные данные" });
         }
-        catch (Exception ex)
+
+        var result = await _authService.Login(request);
+
+        if (!result.IsSuccess)
         {
-            _logger.LogError(ex, "AuthController error");
-            return StatusCode(500, new { message = "Внутренняя ошибка сервера" });
+            return BadRequest(new { message = result.ErrorMessage });
         }
+
+        return Ok(new { token = result.Token, role = result.Role });        
     }
-    
+
+
 }

@@ -1,27 +1,31 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using ShelterAnimalBackend.Core.Entities;
+using System.ComponentModel.DataAnnotations;
 
-namespace ShelterAnimalBackend.Core.Entities
+public class User
 {
-    public class User
-    {
-        public int Id { get; set; }
-        public string Surname { get; set; }
-        public string Name { get; set; }
-        public string Patronymic { get; set; }
-        public string Email { get; set; }
-        public string Phone { get; set; }
-        public string Login { get; set; }
-        public string Password { get; set; }
-        public int RoleId { get; set; }
-        public Role Role { get; set; }
-       
+    [Required]
+    public int Id { get; set; }
+    [Required]
+    public string Surname { get; set; }
 
+    [Required]
+    public string Name { get; set; }
 
+    public string Patronymic { get; set; }
 
+    [Required, EmailAddress]
+    public string Email { get; set; }
 
-    }
+    [Required, Phone]
+    public string Phone { get; set; }
+
+    [Required, MinLength(5)]
+    public string Login { get; set; }
+
+    [Required, MinLength(6)]
+    public string Password { get; set; }
+
+    [Required]
+    public int RoleId { get; set; }
+    public Role Role { get; set; }
 }

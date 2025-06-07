@@ -1,5 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json;
 using ShelterAnimalBackend.Application.Services;
+using ShelterAnimalBackend.Core.Dtos.Requests;
 using ShelterAnimalBackend.Core.Entities;
 
 namespace ShelterAnimalBackend.Api.Controllers;
@@ -19,78 +21,141 @@ public class AnimalsController : ControllerBase
 
     [HttpGet]
     public async Task<ActionResult<List<Animal>>> GetAllAnimals()
-    {
-        try
-        {
-            var animals = await _animalService.GetAllAsync();
-            return Ok(animals);
-        }
-        catch (Exception ex)
-        {
-            _logger.LogError(ex, "Ошибка при получении списка животных");
-            return StatusCode(500, "Внутренняя ошибка сервера");
-        }
+    {        
+        var animals = await _animalService.GetAllAsync();
+        return Ok(animals);       
     }
 
     [HttpGet("{id}")]
     public async Task<ActionResult<Animal>> GetAnimalById(int id)
-    {
-        try
+    {        
+        var animal = await _animalService.GetByIdAsync(id);
+        if (animal == null)
         {
-            var animal = await _animalService.GetByIdAsync(id);
-            if (animal == null)
-            {
-                return NotFound($"Животное с ID {id} не найдено");
-            }
-            return Ok(animal);
+            return NotFound($"Животное с ID {id} не найдено");
         }
-        catch (Exception ex)
-        {
-            _logger.LogError(ex, $"Ошибка при получении животного с ID {id}");
-            return StatusCode(500, "Внутренняя ошибка сервера");
-        }
+        return Ok(animal); 
     }
 
     [HttpPost]
-    public async Task<ActionResult<Animal>> AddAnimal([FromBody] Animal animal)
+    public async Task<ActionResult<Animal>> AddAnimal([FromBody] CreateAnimalDto animalDto)
     {
-        try
+        
+        if (!ModelState.IsValid)
         {
-            if (!ModelState.IsValid)
-            {
-                return BadRequest(ModelState);
-            }
+            return BadRequest(ModelState);
+        }
 
-            await _animalService.AddAsync(animal);
-            return CreatedAtAction(nameof(GetAnimalById), new { id = animal.Id }, animal);
-        }
-        catch (Exception ex)
+        var animal = new Animal
         {
-            _logger.LogError(ex, "Ошибка при добавлении животного");
-            return StatusCode(500, "Внутренняя ошибка сервера");
-        }
+            Name = animalDto.Name,
+            TypeAnimalId = animalDto.TypeAnimalId,
+            Gender = animalDto.Gender,
+            Age = animalDto.Age,
+            AnimalStatusId = animalDto.AnimalStatusId,
+            Description = animalDto.Description,
+            Photo = string.IsNullOrEmpty(animalDto.Photo) ? "http://localhost:5164/images/заглушка.png" : animalDto.Photo
+        };
+
+        await _animalService.AddAsync(animal);
+
+        return CreatedAtAction(nameof(GetAnimalById), new { id = animal.Id }, animal);
+        
     }
 
-    
+
+
 
     [HttpDelete("{id}")]
     public async Task<IActionResult> DeleteAnimal(int id)
+    {   
+        var animal = await _animalService.GetByIdAsync(id);
+        if (animal == null)
+        {
+            return NotFound($"Животное с ID {id} не найдено");
+        }
+
+        if (!string.IsNullOrEmpty(animal.Photo) && animal.Photo != "http://localhost:5164/images/заглушка.png")
+        {
+            var fileName = Path.GetFileName(animal.Photo);
+            var filePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "images", fileName);
+
+            if (System.IO.File.Exists(filePath))
+            {
+                System.IO.File.Delete(filePath);
+            }
+        }
+
+        await _animalService.DeleteAsync(id);
+        return NoContent();        
+    }
+    [HttpPut("{id}")]
+    public async Task<IActionResult> UpdateAnimal(int id, [FromBody] Animal updatedAnimal)
     {
         try
         {
-            var animal = await _animalService.GetByIdAsync(id);
-            if (animal == null)
+            Console.WriteLine($"Received update request for animal with ID: {id}");
+            Console.WriteLine($"Received data: {JsonConvert.SerializeObject(updatedAnimal)}");
+
+            if (updatedAnimal == null || updatedAnimal.Id == 0)
             {
+                Console.WriteLine("Invalid animal data: Animal is null or ID is 0");
+                return BadRequest("Некорректные данные животного");
+            }
+
+            if (id != updatedAnimal.Id)
+            {
+                Console.WriteLine($"ID mismatch: URL ID {id} does not match animal ID {updatedAnimal.Id}");
+                return BadRequest("ID животного не совпадает с ID в URL");
+            }
+
+            var existingAnimal = await _animalService.GetByIdAsync(id);
+            if (existingAnimal == null)
+            {
+                Console.WriteLine($"Animal with ID {id} not found");
                 return NotFound($"Животное с ID {id} не найдено");
             }
 
-            await _animalService.DeleteAsync(id);
-            return NoContent(); 
+            Console.WriteLine($"Updating animal with ID: {id}");
+
+            existingAnimal.Name = updatedAnimal.Name;
+            existingAnimal.TypeAnimalId = updatedAnimal.TypeAnimalId;
+            existingAnimal.Gender = updatedAnimal.Gender;
+            existingAnimal.Age = updatedAnimal.Age;
+            existingAnimal.AnimalStatusId = updatedAnimal.AnimalStatusId;
+            existingAnimal.Description = updatedAnimal.Description;
+
+            if (!string.IsNullOrEmpty(updatedAnimal.Photo) && updatedAnimal.Photo != "http://localhost:5164/images/заглушка.png")
+            {
+                var fileName = Path.GetFileName(updatedAnimal.Photo);
+                var filePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "images", fileName);
+
+                Console.WriteLine($"Checking file existence: {filePath}");
+
+                if (!System.IO.File.Exists(filePath))
+                {
+                    Console.WriteLine($"File not found: {filePath}");
+                    existingAnimal.Photo = "http://localhost:5164/images/заглушка.png";
+                }
+                else
+                {
+                    existingAnimal.Photo = updatedAnimal.Photo;
+                }
+            }
+            else
+            {
+                existingAnimal.Photo = "http://localhost:5164/images/заглушка.png";
+            }
+
+            await _animalService.UpdateAsync(existingAnimal);
+            Console.WriteLine($"Animal with ID {id} updated successfully");
+            return NoContent();
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, $"Ошибка при удалении животного с ID {id}");
-            return StatusCode(500, "Внутренняя ошибка сервера");
+            Console.WriteLine($"Error updating animal: {ex.Message}");
+            return StatusCode(500, $"Internal server error: {ex.Message}");
         }
     }
+
 }

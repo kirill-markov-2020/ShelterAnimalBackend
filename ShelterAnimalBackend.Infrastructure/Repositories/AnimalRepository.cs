@@ -32,6 +32,9 @@ public class AnimalRepository : IAnimalRepository
 
     public async Task AddAsync(Animal animal)
     {
+        animal.TypeAnimal = null;
+        animal.AnimalStatus = null;
+
         await _context.Animal.AddAsync(animal);
         await _context.SaveChangesAsync();
     }
